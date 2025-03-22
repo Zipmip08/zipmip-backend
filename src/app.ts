@@ -13,12 +13,15 @@ const PORT = process.env.PORT || 8070;
 app.use(express.json());
 app.use(cookieParser());
 
-const sequelize = getSequelize(); 
-connectDB();                     
-initModels(sequelize);           
+const sequelize = getSequelize();
+connectDB();
+initModels(sequelize);
+
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 
 app.use("/auth", authRoutes);
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

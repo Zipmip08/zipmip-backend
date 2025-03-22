@@ -1,2 +1,26 @@
+# Dependencies
 /node_modules
-/vscode
+/package-lock.json
+
+# IDE
+.vscode
+/.idea
+
+# Build
+/dist
+/build
+
+# Environment
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db
