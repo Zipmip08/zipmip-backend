@@ -71,6 +71,7 @@ export class otps extends Model<otpsAttributes, otpsCreationAttributes> implemen
     tableName: 'otps',
     schema: 'public',
     timestamps: true,
+    underscored: true,
     indexes: [
       {
         name: "otps_pkey",

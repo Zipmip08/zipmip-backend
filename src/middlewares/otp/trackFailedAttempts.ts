@@ -1,24 +1,20 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 
-// کش ساده در حافظه برای دنبال کردن تلاش‌های ناموفق
 const failedAttemptsMap = new Map<
   string,
   { count: number; firstTryAt: number }
 >();
 
-const BAN_DURATION = 30 * 60 * 1000; // 30 دقیقه
-const ATTEMPT_WINDOW = 7 * 60 * 1000; // 7 دقیقه
+const BAN_DURATION = 30 * 60 * 1000;
+const ATTEMPT_WINDOW = 7 * 60 * 1000;
 const MAX_FAILED_ATTEMPTS = 3;
 
-export const trackFailedOtpAttempts = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const trackFailedOtpAttempts: RequestHandler = (req, res, next) => {
   const phone = req.body.phone;
 
   if (!phone) {
-    return res.status(400).json({ message: "شماره تلفن نامعتبر است." });
+    res.status(400).json({ message: "شماره تلفن نامعتبر است." });
+    return;
   }
 
   const attemptInfo = failedAttemptsMap.get(phone);
@@ -26,25 +22,21 @@ export const trackFailedOtpAttempts = (
   if (attemptInfo) {
     const now = Date.now();
 
-    // اگه هنوز توی بازه ۳۰ دقیقه‌ای بن شده
     if (attemptInfo.count >= MAX_FAILED_ATTEMPTS) {
       const passedSinceFirstTry = now - attemptInfo.firstTryAt;
 
       if (passedSinceFirstTry < BAN_DURATION) {
-        const minutesLeft = Math.ceil(
-          (BAN_DURATION - passedSinceFirstTry) / 60000
-        );
-        return res.status(429).json({
+        const minutesLeft = Math.ceil((BAN_DURATION - passedSinceFirstTry) / 60000);
+        res.status(429).json({
           message: `به دلیل تلاش‌های زیاد ناموفق، تا ${minutesLeft} دقیقه نمی‌توانید مجدداً امتحان کنید.`,
         });
+        return;
       } else {
-        // بازنشانی بعد از بن
         failedAttemptsMap.delete(phone);
       }
     }
   }
 
-  // ادامه بده به مرحله بعد (تأیید OTP)
   next();
 };
 
