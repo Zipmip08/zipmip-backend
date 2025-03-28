@@ -5,7 +5,7 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import cookieParser from "cookie-parser";
 import { initModels } from "./models";
-const cors = require("cors");
+import cors from "cors";
 
 dotenv.config();
 
