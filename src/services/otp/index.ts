@@ -1,7 +1,7 @@
 // src/services/otp/index.ts
 import { generateOtp } from "./otpGenerator";
 import { sendOtpSms } from "./otpSender";
-import { saveOtp } from "./otpSaver";
+import { saveOtp } from './otpSaver';
 
 export const requestOtp = async (phone: string) => {
   try {

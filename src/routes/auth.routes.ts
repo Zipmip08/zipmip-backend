@@ -1,8 +1,8 @@
-import { verifyOTP } from "../controllers/verify/verify";
 import { requestOTP } from "../controllers/send/send";
 import { Router } from "express";
 import { limitOtpRequestFrequency } from "../middlewares/otp/limitRequestFrequency";
 import { trackFailedOtpAttempts } from "../middlewares/otp/trackFailedAttempts";
+import { verifyOTP } from './../controllers/verify/verify';
 
 const router = Router();
 

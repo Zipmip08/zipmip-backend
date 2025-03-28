@@ -1,38 +1,55 @@
 import { Request, Response } from "express";
-
 import { validateOtp } from "../../validation/otpValidator";
 import { generateToken } from "../../utils/jwt";
+import { users } from "../../models";
+import { phoneSchema } from "../../validation/phoneSchema";
 
 export const verifyOTP = async (req: Request, res: Response) => {
   const { phone, code } = req.body;
 
-  try {
-    const result = await validateOtp(phone, code);
+  // اعتبارسنجی شماره تلفن
+  const isValid = phoneSchema.safeParse(phone);
+  if (!isValid.success) {
+    res.status(400).json({
+      // ✅ افزودن return
+      message: "شماره تلفن نامعتبر است",
+      errors: isValid.error.errors,
+    });
+    return;
+  }
 
+  try {
+    // اعتبارسنجی کد OTP
+    const result = await validateOtp(phone, code);
     if (!result.valid) {
       res.status(400).json({ message: result.message });
       return;
     }
 
-    // ✅ ایجاد توکن
-    const token = generateToken({ phone });
+    // یافتن یا ایجاد کاربر
+    const [user] = await users.findOrCreate({
+      where: { phone: isValid.data }, 
+    });
 
-    // ✅ ست کردن توکن در کوکی HttpOnly
+    // ایجاد توکن
+    const token = generateToken({ phone: user.phone.toString() });
+
+    // تنظیم کوکی
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // فقط روی https در حالت پروداکشن
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 3 * 24 * 60 * 60 * 1000, // 3 روز
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
+    // ارسال پاسخ موفقیتآمیز
     res.status(200).json({
+      // ✅ افزودن return
       message: result.message,
-      token, // فقط برای تست نمایش بدیم (در حالت واقعی ممکنه حذف بشه)
+      user: { id: user.id, phone: user.phone },
     });
   } catch (error) {
-    console.error("❌ Error verifying OTP:", error);
-    res.status(500).json({ message: "خطای سرور هنگام تایید کد" });
+    console.error("❌ خطا در تایید کد:", error);
+    res.status(500).json({ message: "خطای سرور هنگام تایید کد" }); // ✅ افزودن return
   }
 };
-
-

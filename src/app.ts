@@ -2,16 +2,24 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB, getSequelize } from "./config/db";
 import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
 import cookieParser from "cookie-parser";
 import { initModels } from "./models";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8070;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
+
+// یا برای امنیت بیشتر در محیط Production:
+app.use(cors({
+  origin: "http://localhost:3000", // دامنه فرانتت
+}));
+
 
 const sequelize = getSequelize();
 connectDB();
@@ -21,7 +29,8 @@ app.get("/", (req, res) => {
   res.send("API is running");
 });
 
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

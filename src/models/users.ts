@@ -21,8 +21,8 @@ export interface usersAttributes {
   current_session_token?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  is_registered: boolean; // 🔴 اضافه شد
 }
-
 export type usersPk = "id";
 export type usersId = users[usersPk];
 export type usersOptionalAttributes =
@@ -52,6 +52,7 @@ export class users
   current_session_token?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  public is_registered!: boolean;
 
   // users hasMany admins via user_id
   admins!: admins[];
@@ -154,6 +155,11 @@ export class users
           type: DataTypes.INTEGER,
           allowNull: false,
           primaryKey: true,
+        },
+        is_registered: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false, // پیش‌فرض false
         },
         phone: {
           type: DataTypes.STRING(20),

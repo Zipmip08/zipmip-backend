@@ -9,12 +9,13 @@ export const saveOtp = async (
   try {
     const nowTehran = moment.tz("Asia/Tehran");
     const expiresAt = nowTehran.clone().add(expiresMinutes, "minutes").toDate();
-
     let user = await users.findOne({ where: { phone } });
 
+    // اگر کاربر وجود نداشت، ایجاد شود
     if (!user) {
       user = await users.create({
         phone,
+        is_registered: false,
         role: "user",
         is_verified: false,
         is_active: true,

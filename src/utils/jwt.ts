@@ -1,10 +1,13 @@
-// src/utils/jwt.ts
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export const generateToken = (payload: object): string => {
+interface TokenPayload {
+  phone: string;
+}
+
+export const generateToken = (payload: TokenPayload): string => {
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: "3d", // اعتبار سه‌روزه
+    expiresIn: "3d", // هماهنگ با maxAge کوکی
   });
 };

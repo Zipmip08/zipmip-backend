@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { users, usersId } from './users';
+import { users, usersId } from './users';
 
 export interface otpsAttributes {
   id: number;
@@ -44,9 +44,9 @@ export class otps extends Model<otpsAttributes, otpsCreationAttributes> implemen
       type: DataTypes.STRING(20),
       allowNull: false,
       references: {
-        model: 'users',
-        key: 'phone'
-      }
+        model: users, // 🔴 ارجاع مستقیم به مدل
+        key: "phone",
+      },
     },
     code: {
       type: DataTypes.STRING(255),
