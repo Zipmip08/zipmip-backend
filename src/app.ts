@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 8070;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ credentials: true }));
 
 const sequelize = getSequelize();
 connectDB();
