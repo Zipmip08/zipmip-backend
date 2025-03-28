@@ -28,7 +28,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
 
     // یافتن یا ایجاد کاربر
     const [user] = await users.findOrCreate({
-      where: { phone: isValid.data }, 
+      where: { phone: isValid.data },
     });
 
     // ایجاد توکن
@@ -42,9 +42,10 @@ export const verifyOTP = async (req: Request, res: Response) => {
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
+    res.setHeader("Authorization", `Bearer ${token}`);
     // ارسال پاسخ موفقیتآمیز
     res.status(200).json({
-      // ✅ افزودن return
+      accessToken: token,
       message: result.message,
       user: { id: user.id, phone: user.phone },
     });
