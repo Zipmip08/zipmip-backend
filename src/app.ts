@@ -5,7 +5,7 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import cookieParser from "cookie-parser";
 import { initModels } from "./models";
-const cors = require('cors');
+const cors = require("cors");
 
 dotenv.config();
 
@@ -15,12 +15,6 @@ const PORT = process.env.PORT || 8070;
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-
-// یا برای امنیت بیشتر در محیط Production:
-app.use(cors({
-  origin: "http://localhost:3000", // دامنه فرانتت
-}));
-
 
 const sequelize = getSequelize();
 connectDB();
